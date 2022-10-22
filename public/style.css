@@ -330,6 +330,7 @@
    * Help dialog.
    ***********************/
   .dialog {
+    text-transform: capitalize !important;
     background: var(--light);
     text-align: center;
     padding: 24px;
@@ -348,6 +349,7 @@
   }
   
   .dialog p, .dialog ul {
+    text-transform: capitalize !important;
     max-width: 700px;
     margin: 0 auto;
     font-size: 18px;
@@ -356,6 +358,9 @@
   
   .dialog .button {
     text-align: center;
+  }
+  .dialog h1{
+    text-transform: capitalize !important;
   }
   
   .dialog ul {
@@ -502,4 +507,9 @@
       overflow-y: hidden;
       margin: 20px auto;
     }   
+  }
+
+  .justCheckn {
+    width: 100%;
+    display: none;
   }

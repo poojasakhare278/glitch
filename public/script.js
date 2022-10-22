@@ -56,6 +56,7 @@ function init() {
 }
 
 function resize() {
+  console.log("step 1");
   // If this is a small screen, reorganize the layout.
   if (window.innerWidth < 700 && sectionControls.parentNode !== sectionInstruments.parentNode) {
     sectionControls.parentNode.insertBefore(sectionBrush, sectionControls);
@@ -67,6 +68,7 @@ function resize() {
 }
 
 function userSaidGo() {
+  console.log("step 2");
   model = new mm.Coconet('https://storage.googleapis.com/magentadata/js/checkpoints/coconet/bach');
   model.initialize();
   
@@ -90,6 +92,7 @@ function userSaidGo() {
 }
 
 function clickCell(event) {
+  console.log("step 3");
   let button;
   
   // Check if this is a touch event or a mouse event.
@@ -108,6 +111,7 @@ function clickCell(event) {
   
   // If we're not erasing, sound it out.
   if (paletteVoice > -1) {
+    console.log("pallete voice", paletteVoice)
     player.playNoteDown({pitch: 81 - x, velocity: 80});
     setTimeout(() => player.playNoteUp({pitch: 81 - x, velocity: 80}), 150);
   }
@@ -129,6 +133,7 @@ function clickCell(event) {
 }
 
 function reset() {
+  console.log("step 17");
   board.reset();
   board.showScale(paletteScale);
   // Stop the player if it's playing.
@@ -138,6 +143,7 @@ function reset() {
 }
 
 function playOrPause() {
+  console.log("step 4");
   const container = document.getElementById('container');
   // If we're playing, stop playing.
   if (player.isPlaying()) {
@@ -157,6 +163,7 @@ function playOrPause() {
 }
 
 function play() {
+  console.log("step 5");
   btnPlay.hidden = true;
   btnStop.hidden = false;
   board.playEnd();
@@ -168,6 +175,7 @@ function play() {
 }
 
 function stop() {
+  console.log("step 6");
   btnPlay.hidden = false;
   btnStop.hidden = true;
   board.playEnd();
@@ -175,6 +183,9 @@ function stop() {
 }
 
 function infill() {
+  console.log("step 7");
+  console.log("previous sequennce", previousSequence);
+ 
   if (shouldReInfill) {
     board.drawNoteSequence(previousSequence);
   }
@@ -182,7 +193,10 @@ function infill() {
   
   const sequence = previousSequence = board.getNoteSequence();
   const mask = board.getMaskSequence();
+  console.log("mask", mask);
   
+  console.log("step 8");
+
   if (sequence.notes.length === 0) {
     showEmptyNoteSequenceError();
     return;
@@ -204,7 +218,7 @@ function infill() {
     }
     pitchToTime[note.pitch].push(note.quantizedStartStep);
   }
-  
+  console.log("step 9");
   // Clear all the previous "infill" ui.
   const els = document.querySelectorAll('.pixel.infilled');
   for (let i = 0; i < els.length; i++) {els[i].classList.remove('infilled'); }
@@ -213,6 +227,7 @@ function infill() {
     temperature: parseFloat(inputTemp.value),
     infillMask: mask
   }).then((output) => {
+    console.log("step 10");
     clearError();
     board.drawNoteSequence(output);
     
@@ -222,7 +237,7 @@ function infill() {
     // Style the Coconet notes differently.
     for (let i = 0; i < output.notes.length; i++) {
       const note = output.notes[i];
-      
+      console.log("step 11");
       // If we didn't have this note before, it's infilled.
       if (!pitchToTime[note.pitch] || (pitchToTime[note.pitch] && pitchToTime[note.pitch].indexOf(note.quantizedStartStep) === -1)) {
         const uiButton = document.querySelector(`.pixel[data-row="${81 - note.pitch}"][data-col="${note.quantizedStartStep}"]`);
@@ -233,6 +248,7 @@ function infill() {
 }
 
 function activateVoice(event, voice) {
+  console.log("step 12");
   const btn = event.target.localName === 'button' ? event.target : event.target.parentNode;
   
   // Deactivate the previous button.
@@ -240,11 +256,13 @@ function activateVoice(event, voice) {
   if (prevButton) {
     prevButton.classList.remove('active');
   }
+  console.log("step 14");
   // Activate this one.
   btn.classList.add('active');
   
   // Switch back to a small brush if we were erasing
   if (voice > -1 && paletteVoice < 0) {
+    console.log("step 13");
     defaultBrush.click();
   }
   
@@ -252,16 +270,19 @@ function activateVoice(event, voice) {
 }
 
 function activateBrush(event, brush) {
+  console.log("step 15");
   const btn = event.target.localName === 'button' ? event.target : event.target.parentNode;
   
   // Deactivate the previous button.
   const prevButton = document.querySelector('.brush.active');
   if (prevButton) {
     prevButton.classList.remove('active');
+    console.log("step 16");
   }
   // Activate this one.
   btn.classList.add('active');
   brushSize = brush;
+  console.log("step 17");
 }
 
 function activateScale(event, scale) {
@@ -272,6 +293,7 @@ function activateScale(event, scale) {
   if (prevButton) {
     prevButton.classList.remove('active');
   }
+  console.log("step 18");
   // Activate this one.
   btn.classList.add('active');
   paletteScale = scale;
@@ -279,11 +301,13 @@ function activateScale(event, scale) {
 }
 
 function save() {
+  console.log("step 19");
   const seq = mm.sequences.mergeConsecutiveNotes(board.getNoteSequence());
   saveAs(new File([mm.sequenceProtoToMidi(seq)], 'bach.mid'));
 }
 
 function toggleHelp() {
+  console.log("step 20");
   if (help.classList.contains('hidden')) {
     help.classList.remove('hidden');
     main.classList.add('hidden');
@@ -294,9 +318,10 @@ function toggleHelp() {
 }
 
 /* 
- * For testing.
+ * For testing.F
  */
 function onKeyDown(event) {
+  console.log("step 21");
   if (event.keyCode === 82) {  // r for reload.
     board.drawNoteSequence(previousSequence);
     infill();
@@ -319,6 +344,7 @@ function onKeyDown(event) {
 }
 
 function loadMidi(event) {
+  console.log("step 22");
   mm.blobToNoteSequence(event.target.files[0]).then((ns) => {
     const q = mm.sequences.quantizeNoteSequence(ns, 4);
     board.drawNoteSequence(q);
@@ -329,6 +355,7 @@ function loadMidi(event) {
  * Error message ui.
  */
 function showEmptyNoteSequenceError() {
+  console.log("step 22");
   main.classList.add('blur');
   error.textContent = 'Draw some 🎵 first!';
   error.hidden = false;
